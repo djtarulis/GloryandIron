@@ -1,0 +1,117 @@
+Glory and Iron – Game Design Document (War2-Glory Inspired)
+1. Game Overview
+    Glory and Iron is a browser-based massively multiplayer online strategy game inspired by War2-Glory. Players take the role of city commanders, building and upgrading cities, managing resources, constructing buildings, training troops, forming alliances, and engaging in PvP and PvE battles. The core gameplay loop revolves around city development, military expansion, and strategic warfare.
+
+2. Core Gameplay Flow
+    A. Registration & Authentication
+        Players register with a unique username and password.
+        Players log in to receive a JWT token for authenticated actions.
+    B. City Creation
+        Upon first login, players create their main city by choosing a name and location (coordinates).
+        Each player starts with one city but can unlock and found additional cities as they progress.
+    C. City & Account Management
+        City Overview: Players can view all their cities and switch between them.
+        Resource Management: Cities generate resources (steel, oil, rubber, food, gold) over time. Players collect these resources manually or via automation (future feature).
+        Building Construction: Players construct and upgrade buildings (e.g., Headquarters, Barracks, Warehouses, Research Centers) to unlock new features, increase production, and strengthen defenses.
+        Research: Players can research technologies to improve resource rates, troop strength, and unlock advanced units/buildings.
+        Troop Recruitment: Players train various troop types (infantry, tanks, artillery, etc.) in their cities.
+        Hero Management: Players recruit and assign heroes to lead armies or govern cities, providing bonuses.
+    D. World Map & Interaction
+        World Map: Players can view the world map, scout other cities, and plan attacks or support missions.
+        PvP Combat: Players attack other players’ cities to plunder resources or weaken rivals.
+        PvE Combat: Players can attack NPC camps, bandit camps, or event targets for rewards.
+        Alliances: Players can form or join alliances, participate in alliance wars, and support each other with resources and reinforcements.
+        Events & Missions: Regular events, daily missions, and quests provide additional goals and rewards.
+    E. Progression & Expansion
+        Multiple Cities: Players can found or conquer additional cities as they progress.
+        Ranking & Achievements: Leaderboards track player and alliance rankings based on power, victories, and achievements.
+3. Game Entities
+    A. Player
+        Unique username, password (hashed)
+        List of owned cities
+        Alliance membership
+        Heroes
+    B. City
+        Name, coordinates (x, y)
+        Resources: steel, oil, rubber, food, gold
+        Resource rates (affected by buildings, research, heroes)
+        Buildings (levels, types)
+        Troops stationed
+        Defenses
+        Current construction/research queues
+        Owner (player)
+    C. Troops
+        Types: Infantry, Tanks, Artillery, etc.
+        Quantity per city
+        Training and movement status
+    D. Buildings
+        Headquarters, Barracks, Warehouses, Research Centers, etc.
+        Level and effects
+    E. Alliance
+        Name, tag, members, rank, alliance buildings, alliance wars
+    F. Hero
+        Name, level, stats, assigned city or army
+4. API Endpoints & Flow (Sample)
+    Action	Endpoint	Method	Description
+    Register	/register	POST	Create a new player account
+    Login	/token	POST	Authenticate and receive JWT token
+    Get Current User	/users/me	GET	Get info about the logged-in user
+    Create City	/city/create	POST	Create a new city
+    List Cities	/cities	GET	List all cities owned by the user
+    City Details	/city/{city_id}/city_details	GET	Get detailed info for a specific city
+    Collect Resources	/city/{city_id}/collect	POST	Collect resources from a city
+    Update City Rates	/city/{city_id}/update_rates	PATCH	Update resource rates for a city
+    Delete City	/city/{city_id}/delete	DELETE	Delete a city owned by the user
+    Construct Building	/city/{city_id}/build	POST	Start or upgrade a building
+    Train Troops	/city/{city_id}/train	POST	Train troops in a city
+    Move Troops	/city/{city_id}/move	POST	Move troops to another city or target
+    
+5. General User Flow
+    Registration:
+        Player signs up with a username and password.
+
+    Login:
+        Player logs in and receives a JWT token.
+
+    Create Main City:
+        Player creates their first city by providing a name and coordinates.
+
+    City Management:
+        View and switch between cities.
+        Collect resources.
+        Construct and upgrade buildings.
+        Train and manage troops.
+        Research technologies.
+        Recruit and assign heroes.
+
+    World Interaction:
+        View the world map.
+        Scout, attack, or support other cities.
+        Join or create an alliance.
+        Participate in events and missions.
+
+    Expansion:
+        Found or conquer additional cities.
+        Climb leaderboards and earn achievements.
+
+6. Future Features (Planned/Optional)
+    Advanced Combat: Battle reports, tactics, and formations.
+    Alliance Buildings: Shared structures and alliance territory.
+    Marketplace: Trade resources and items with other players.
+    Hero Equipment: Equip heroes with items for bonuses.
+    Mobile Support: Responsive UI for mobile browsers.
+
+7. Technical Stack
+    Backend: FastAPI, SQLAlchemy, Alembic, PostgreSQL
+    Frontend: React or Vue (SPA)
+    Auth: JWT-based authentication
+    Deployment: Docker Compose
+
+8. Security & Fair Play
+    All actions require authentication.
+    Only city owners can manage or delete their cities.
+    Anti-cheat and anti-bot measures (future).
+    Secure password storage and JWT handling.
+    
+9. Summary
+    Glory and Iron is a War2-Glory inspired MMO strategy game, focusing on city management, military expansion, alliances, and real-time PvP/PvE interaction. The gameplay loop encourages growth, cooperation, and competition, with a robust backend and extensible design for future features.

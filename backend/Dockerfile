@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y netcat-traditional && rm -rf /var/lib/a
 RUN pip install --no-cache-dir -r requirements.txt
 
 
-COPY wait-for-db.sh /wait-for-db.sh
-RUN chmod +x /wait-for-db.sh
+COPY wait-for-db.sh /code/wait-for-db.sh
+RUN chmod +x /code/wait-for-db.sh
 
-CMD ["/wait-for-db.sh", "db:5432", "--", "sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"]
+CMD ["/code/wait-for-db.sh", "db:5432", "--", "sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"]

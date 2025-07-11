@@ -29,26 +29,83 @@ class City(Base):
     gold_rate = Column(Float, default=0.0)
 
     last_collected_at = Column(DateTime(timezone=True), server_default=func.now())
-    now = datetime.utcnow()
-    elapsed_hours = (now - last_collected_at).total_seconds() / 3600
-    
-    produced_steel = city.steel_rate * elapsed_hours
-    produced_oil = city.oil_rate * elapsed_hours
-    produced_rubber = city.rubber_rate * elapsed_hours
-    produced_food = city.food_rate * elapsed_hours
-    produced_gold = city.gold_rate * elapsed_hours
 
     # Coordinates ----
     x = Column(Integer, nullable=False)
     y = Column(Integer, nullable=False)
 
     # Buildings ----
-    # buildings = relationship("Building", back_populates="city")
-    #TODO: Add building relationships for each type of building
+    buildings = relationship("Building", back_populates="city")
+    
+    ### WAREHOUSE PROPERTIES ----
+    @property
+    def warehouse_level(self):
+        warehouse = next((b for b in self.buildings if b.type == "Warehouse"), None)
+        return warehouse.level if warehouse else 0
 
-    # Troops ----
-    # troops = relationship("Troop", back_populates="city")
-    #TODO: Add troop relationships for each type of troop
+    @property
+    def max_steel(self):
+        return 10000 + self.warehouse_level * 5000
+
+    @property
+    def max_oil(self):
+        return 10000 + self.warehouse_level * 5000
+
+    @property
+    def max_rubber(self):
+        return 10000 + self.warehouse_level * 5000
+
+    @property
+    def max_food(self):
+        return 10000 + self.warehouse_level * 5000
+
+    @property
+    def max_gold(self):
+        return 10000 + self.warehouse_level * 2000
+    
+    ### BARRACKS PROPERTIES ----
+    @property
+    def barracks_level(self):
+        barracks = next((b for b in self.buildings if b.type == "Barracks"), None)
+        return barracks.level if barracks else 0
+    
+    @property
+    def max_capacity(self):
+        return 2000 + self.barracks_level * 500
+    
+    @property
+    def training_rate(self):
+        return 1.0 + (self.barracks_level * 0.1)
+    
+    @property
+    def unlocked_troop_types(self):
+    # Example: unlocks new troop types at certain levels
+        troop_unlocks = {
+            1: ["Rifleman"],
+            1: ["Medic"],
+            1: ["Engineer"],
+            1: ["Machine Gunner"],
+            2: ["Scout"],
+            2: ["Grenadier"],
+            3: ["Automatic Rifleman"],
+            2: ["Anti-Tank Gun"],
+            4: ["Sniper"],
+            3: ["Mortar"],
+            4: ["Flamethrower"],
+        }
+        unlocked = set()
+        for lvl, types in troop_unlocks.items():
+            if self.barracks_level >= lvl:
+                unlocked.update(types)
+        return list(unlocked)
+
+    @property
+    def training_queue_size(self):
+        # Example: base 1, +1 per 5 levels
+        return 1 + (self.barracks_level // 5)
+    
+    # Units ----
+    units = relationship("Unit", back_populates="city")
 
     # Timestamps ----
     created_at = Column(DateTime(timezone=True), server_default=func.now())

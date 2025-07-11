@@ -1,0 +1,36 @@
+City Buildings System
+Add a buildings table/model to represent structures in each city.
+Each building should have:
+
+id
+city_id (foreign key)
+type (e.g., Headquarters, Barracks, Warehouse, Research Center)
+level
+construction_started_at
+construction_finished_at
+2. Building Construction Endpoint
+Add an endpoint to start or upgrade a building:
+
+3. City Resource Cap & Storage
+Add a Warehouse building that increases the max storage for each resource.
+
+Track max_steel, max_oil, etc. in the city, or calculate dynamically from building levels.
+4. Troop Training
+Add a Barracks building and a troops table/model:
+
+id, city_id, type (infantry, tank, etc.), quantity, training_started_at, training_finished_at
+Add endpoints to train and manage troops.
+
+5. City Defense & Upgrades
+Add fields for city defense (e.g., wall level, stationed troops).
+Allow upgrades to increase defense or unlock new features.
+6. City Growth & Population
+Add a population field to the city.
+Population can limit building, troop training, or resource production.
+7. City View Endpoint
+Expand /city/{city_id}/city_details to include:
+
+List of buildings and their levels
+Troop counts
+Storage caps
+Ongoing constructions or trainings
