@@ -1,36 +1,126 @@
-City Buildings System
-Add a buildings table/model to represent structures in each city.
-Each building should have:
+Glory and Iron – In-Depth To-Do List
 
-id
-city_id (foreign key)
-type (e.g., Headquarters, Barracks, Warehouse, Research Center)
-level
-construction_started_at
-construction_finished_at
-2. Building Construction Endpoint
-Add an endpoint to start or upgrade a building:
+1. Core Backend Functionality
+--------------------------------------------------
+- [ ] User Registration & Authentication
+    - [ ] Implement secure registration endpoint
+    - [ ] Implement JWT-based login and token refresh
+    - [ ] Add password hashing and validation
+    - [ ] Add user profile endpoint
 
-3. City Resource Cap & Storage
-Add a Warehouse building that increases the max storage for each resource.
+- [ ] City Management
+    - [ ] Endpoint to create a new city (with name and coordinates)
+    - [X] Endpoint to list all cities for a player
+    - [X] Endpoint to get city details (resources, buildings, troops, etc.)
+    - [x] Endpoint to delete a city (with ownership/auth check)
+    - [ ] Endpoint to switch active city (if needed)
 
-Track max_steel, max_oil, etc. in the city, or calculate dynamically from building levels.
-4. Troop Training
-Add a Barracks building and a troops table/model:
+- [ ] Resource Management
+    - [X] Implement resource generation logic (steel, oil, rubber, food, gold)
+    - [ ] Endpoint to collect resources from a city
+    - [ ] Endpoint to update resource rates (affected by buildings/research)
+    - [ ] Implement resource storage limits (warehouse, etc.)
 
-id, city_id, type (infantry, tank, etc.), quantity, training_started_at, training_finished_at
-Add endpoints to train and manage troops.
+- [ ] Building Construction & Upgrades
+    - [ ] Endpoint to construct/upgrade buildings
+    - [ ] Implement building effects (resource rates, unlocks, etc.)
+    - [ ] Track construction queues and timers
+    - [ ] Add building level-up logic and requirements
 
-5. City Defense & Upgrades
-Add fields for city defense (e.g., wall level, stationed troops).
-Allow upgrades to increase defense or unlock new features.
-6. City Growth & Population
-Add a population field to the city.
-Population can limit building, troop training, or resource production.
-7. City View Endpoint
-Expand /city/{city_id}/city_details to include:
+- [ ] Troop Recruitment & Management
+    - [X] Endpoint to train troops in a city
+    - [ ] Implement troop training queue and timers
+    - [ ] Endpoint to view city garrison
+    - [ ] Endpoint to move troops between cities or to armies
+    - [ ] Prevent negative troop counts and enforce garrison limits
 
-List of buildings and their levels
-Troop counts
-Storage caps
-Ongoing constructions or trainings
+- [ ] Army Management
+    - [ ] Endpoint to create an army from city garrison
+    - [ ] Endpoint to add units to an army (subtract from garrison)
+    - [ ] Endpoint to remove units from an army (return to garrison)
+    - [ ] Endpoint to view army details (units, location, status)
+    - [ ] Endpoint to move army on the map (with travel time)
+    - [ ] Handle army arrival, merging, and splitting logic
+
+- [ ] Combat System
+    - [ ] Implement PvP combat logic (army vs. city, army vs. army)
+    - [ ] Implement PvE combat (NPC camps, bandits, events)
+    - [ ] Generate and store battle reports
+    - [ ] Handle resource plundering and troop losses
+
+- [ ] Research System
+    - [ ] Endpoint to start research in a city
+    - [ ] Implement research effects (resource rates, troop strength, unlocks)
+    - [ ] Track research queues and timers
+
+- [ ] Hero Management
+    - [ ] Endpoint to recruit heroes
+    - [ ] Assign heroes to cities or armies
+    - [ ] Implement hero bonuses and leveling
+    - [ ] Store hero stats and assignments
+
+- [ ] Alliance System
+    - [ ] Endpoint to create/join/leave alliances
+    - [ ] Alliance member management (invite, kick, promote)
+    - [ ] Alliance chat and communication
+    - [ ] Alliance wars and shared buildings (future)
+
+- [ ] Events & Missions
+    - [ ] Implement daily missions and quests
+    - [ ] Implement regular events and rewards
+    - [ ] Track mission progress and completion
+
+2. World Map & Interaction
+--------------------------------------------------
+- [ ] Implement world map data structure (grid, cities, armies, NPCs)
+- [ ] Endpoint to view world map (with fog of war/scouting)
+- [ ] Endpoint to scout other cities or locations
+- [ ] Endpoint to plan and execute attacks/support missions
+
+3. Progression & Expansion
+--------------------------------------------------
+- [ ] Allow founding/conquering additional cities
+- [ ] Implement city conquest logic (ownership transfer, cooldowns)
+- [ ] Implement leaderboards and ranking endpoints
+- [ ] Implement achievement tracking and rewards
+
+4. Frontend (if applicable)
+--------------------------------------------------
+- [ ] User registration/login UI
+- [ ] City overview and management screens
+- [ ] Resource collection and building UI
+- [ ] Troop training and army management UI
+- [ ] World map and movement UI
+- [ ] Combat and battle report screens
+- [ ] Alliance and chat UI
+- [ ] Events, missions, and notifications
+
+5. Technical & Infrastructure
+--------------------------------------------------
+- [ ] Set up Alembic migrations for DB schema changes
+- [ ] Write unit and integration tests for all endpoints
+- [ ] Set up Docker Compose for local development
+- [ ] Set up CI/CD pipeline for deployment
+- [ ] Implement logging and error monitoring
+- [ ] Secure all endpoints (auth, permissions)
+- [ ] Document API endpoints (OpenAPI/Swagger)
+
+6. Security & Fair Play
+--------------------------------------------------
+- [ ] Enforce authentication on all endpoints
+- [ ] Validate all user input (prevent SQL injection, XSS, etc.)
+- [ ] Implement anti-cheat and anti-bot measures (future)
+- [ ] Secure password storage and JWT handling
+- [ ] Rate limiting and abuse prevention
+
+7. Polish & Future Features
+--------------------------------------------------
+- [ ] Advanced combat (tactics, formations, battle replays)
+- [ ] Alliance buildings and territory
+- [ ] Marketplace for trading resources/items
+- [ ] Hero equipment and inventory
+- [ ] Mobile UI improvements
+- [ ] Localization and accessibility
+
+--------------------------------------------------
+This list is a living document. Add, remove, or reprioritize tasks as the

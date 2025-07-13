@@ -2,8 +2,6 @@ from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-
-
 from alembic import context
 import sys
 import os
@@ -20,8 +18,9 @@ if config.config_file_name is not None:
 # Add your app directory to sys.path so imports work
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'backend')))
 
+import app.models  # This will register all models\
+
 from app.db.session import Base
-from app.models import city, player  # import all models so they're registered
 
 # add your model's MetaData object here
 # for 'autogenerate' support

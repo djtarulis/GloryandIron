@@ -5,7 +5,7 @@ from ..db.session import Base
 class Unit(Base):
     __tablename__ = "units"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     city_id = Column(Integer, ForeignKey("cities.id"), nullable=True)  # Nullable
     type = Column(String, index=True)  # e.g., "Rifleman", "Tank"
     quantity = Column(Integer, default=0)

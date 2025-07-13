@@ -7,7 +7,7 @@ from sqlalchemy.sql import func
 class City(Base):
     __tablename__ = "cities"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, unique=True, index=True, nullable=False)
     player_id = Column(Integer, ForeignKey("players.id"))
     player = relationship("Player", back_populates="cities")

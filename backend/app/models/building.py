@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 class Building(Base):
     __tablename__ = "buildings"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     city_id = Column(Integer, ForeignKey("cities.id"))
     type = Column(String, index=True)  # e.g., "Headquarters", "Barracks"
     level = Column(Integer, default=1)

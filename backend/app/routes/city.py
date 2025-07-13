@@ -6,6 +6,7 @@ from datetime import datetime, timedelta, timezone
 from app.db.session import get_db
 from app.models.city import City
 from app.models.building import Building
+from app.models.unit import Unit
 from app.routes.auth import (
     get_player_by_username,
     oauth2_scheme,
@@ -279,3 +280,34 @@ def construct_building(
             "construction_finished_at": building.construction_finished_at
         }
     }
+
+@router.get("/city/{city_id}/garrison")
+def get_city_garrison(
+    city_id: int,
+    db: Session = Depends(get_db),
+    token: str = Depends(oauth2_scheme)
+):
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    username = payload.get("sub")
+    player_obj = get_player_by_username(db, username)
+    city = db.query(City).filter(City.id == city_id, City.player_id == player_obj.id).first()
+    if not city:
+        raise HTTPException(status_code=403, detail="Not authorized to view this city garrison")
+
+    # Only show units with quantity > 0
+    garrison = db.query(Unit).filter(
+        Unit.city_id == city_id,
+        Unit.moving == 0,
+        Unit.quantity > 0
+    ).all()
+    
+
+    return {"city_id": city_id, "garrison": [
+        {
+            "unit_id": unit.id,
+            "type": unit.type,
+            "quantity": unit.quantity,
+            "x": unit.x,
+            "y": unit.y
+        } for unit in garrison
+    ]}
