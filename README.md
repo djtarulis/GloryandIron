@@ -69,24 +69,24 @@ The frontend (to be developed) will connect to this API to provide a rich, inter
 
 ### Medium-Term
 
-- **Combat System:**  
+- [ ] **Combat System:**  
   Implement attacking, defending, and battle resolution.
-- **Alliance/Clan System:**  
+- [ ] **Alliance/Clan System:**  
   Allow players to form alliances and cooperate.
-- **Resource Trading:**  
+- [ ] **Resource Trading:**  
   Enable trading between players or cities.
-- **Timed Events:**  
+- [ ]  **Timed Events:**  
   Add background tasks for events, quests, and world updates.
 
 ### Long-Term
 
-- **Advanced Frontend:**  
+- [ ]  **Advanced Frontend:**  
   Full-featured browser client with real-time updates.
-- **Chat and Messaging:**  
+- [ ]  **Chat and Messaging:**  
   In-game communication between players.
-- **Admin Tools:**  
+- [ ]  **Admin Tools:**  
   Tools for moderation and game balancing.
-- **Performance and Scaling:**  
+- [ ]  **Performance and Scaling:**  
   Optimize for large numbers of concurrent players.
 
 ---
