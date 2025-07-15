@@ -3,16 +3,16 @@ Glory and Iron – In-Depth To-Do List
 1. Core Backend Functionality
 --------------------------------------------------
 - [ ] User Registration & Authentication
-    - [ ] Implement secure registration endpoint
-    - [ ] Implement JWT-based login and token refresh
-    - [ ] Add password hashing and validation
-    - [ ] Add user profile endpoint
+    - [X] Implement secure registration endpoint
+    - [X] Implement JWT-based login and token refresh
+    - [X] Add password hashing and validation
+    - [X] Add user profile endpoint
 
 - [ ] City Management
-    - [ ] Endpoint to create a new city (with name and coordinates)
+    - [X] Endpoint to create a new city (with name and coordinates)
     - [X] Endpoint to list all cities for a player
     - [X] Endpoint to get city details (resources, buildings, troops, etc.)
-    - [x] Endpoint to delete a city (with ownership/auth check)
+    - [X] Endpoint to delete a city (with ownership/auth check)
     - [ ] Endpoint to switch active city (if needed)
 
 - [ ] Resource Management
@@ -35,9 +35,9 @@ Glory and Iron – In-Depth To-Do List
     - [ ] Prevent negative troop counts and enforce garrison limits
 
 - [ ] Army Management
-    - [ ] Endpoint to create an army from city garrison
-    - [ ] Endpoint to add units to an army (subtract from garrison)
-    - [ ] Endpoint to remove units from an army (return to garrison)
+    - [X] Endpoint to create an army from city garrison
+    - [X] Endpoint to add units to an army (subtract from garrison)
+    - [X] Endpoint to remove units from an army (return to garrison)
     - [ ] Endpoint to view army details (units, location, status)
     - [ ] Endpoint to move army on the map (with travel time)
     - [ ] Handle army arrival, merging, and splitting logic

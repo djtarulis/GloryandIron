@@ -311,3 +311,29 @@ def get_city_garrison(
             "y": unit.y
         } for unit in garrison
     ]}
+
+@router.post("/switch_active_city")
+def switch_active_city(
+    city_id: int,
+    db: Session = Depends(get_db),
+    token: str = Depends(oauth2_scheme)
+):
+    """
+    Switch the user's active city. Stores the active city_id in the player's profile.
+    """
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    username = payload.get("sub")
+    player = get_player_by_username(db, username)
+    if not player:
+        raise HTTPException(status_code=401, detail="Invalid user")
+
+    city = db.query(City).filter(City.id == city_id, City.player_id == player.id).first()
+    if not city:
+        raise HTTPException(status_code=404, detail="City not found or not owned by user")
+
+    # Store the active city_id in the player profile (assumes 'active_city_id' column exists)
+    player.active_city_id = city_id
+    db.commit()
+    db.refresh(player)
+
+    return {"msg": f"Active city switched to '{city.name}'", "active_city_id": city_id}

@@ -1,0 +1,4 @@
+docker compose exec backend bash
+cd /workspace
+alembic -c alembic.ini revision --autogenerate -m "Add active_city_id to players"
+alembic -c alembic.ini upgrade head

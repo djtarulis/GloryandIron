@@ -10,7 +10,7 @@ class City(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, unique=True, index=True, nullable=False)
     player_id = Column(Integer, ForeignKey("players.id"))
-    player = relationship("Player", back_populates="cities")
+    player = relationship("Player", back_populates="cities", foreign_keys="[City.player_id]")
     
     # Resources ----
     steel = Column(Integer, default=0)
