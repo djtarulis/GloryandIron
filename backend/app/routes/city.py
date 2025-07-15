@@ -31,6 +31,11 @@ def create_city(
     if not player:
         raise HTTPException(status_code=401, detail="Invalid user")
     
+    # Prevent duplicate city coordinates
+    existing_city = db.query(City).filter(City.x == x, City.y == y).first()
+    if existing_city:
+        raise HTTPException(status_code=400, detail="A city already exists at these coordinates.")
+
     # Check if this is the player's first city
     is_first_city = db.query(City).filter(City.player_id == player.id).count() == 0
 
@@ -117,6 +122,15 @@ def collect_resources(
     food_rate = 120.0
     gold_rate = 50.0
 
+    # Store previous resource totals
+    prev_resources = {
+        "steel": city.steel,
+        "oil": city.oil,
+        "rubber": city.rubber,
+        "food": city.food,
+        "gold": city.gold,
+    }
+
     city.steel = min(city.steel + float(steel_rate * elapsed_hours), city.max_steel)
     city.oil = min(city.oil + float(oil_rate * elapsed_hours), city.max_oil)
     city.rubber = min(city.rubber + float(rubber_rate * elapsed_hours), city.max_rubber)
@@ -126,8 +140,19 @@ def collect_resources(
 
     db.commit()
     db.refresh(city)
+
+    # Calculate collected amounts
+    collected = {
+        "steel": city.steel - prev_resources["steel"],
+        "oil": city.oil - prev_resources["oil"],
+        "rubber": city.rubber - prev_resources["rubber"],
+        "food": city.food - prev_resources["food"],
+        "gold": city.gold - prev_resources["gold"],
+    }
+
     return {
         "msg": "Resources collected",
+        "collected": collected,
         "resources": {
             "steel": city.steel,
             "oil": city.oil,

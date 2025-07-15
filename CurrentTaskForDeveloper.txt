@@ -2,27 +2,27 @@ Glory and Iron – In-Depth To-Do List
 
 1. Core Backend Functionality
 --------------------------------------------------
-- [ ] User Registration & Authentication
+- [X] User Registration & Authentication
     - [X] Implement secure registration endpoint
     - [X] Implement JWT-based login and token refresh
     - [X] Add password hashing and validation
     - [X] Add user profile endpoint
 
-- [ ] City Management
+- [X] City Management
     - [X] Endpoint to create a new city (with name and coordinates)
     - [X] Endpoint to list all cities for a player
     - [X] Endpoint to get city details (resources, buildings, troops, etc.)
     - [X] Endpoint to delete a city (with ownership/auth check)
-    - [ ] Endpoint to switch active city (if needed)
+    - [X] Endpoint to switch active city (if needed)
 
-- [ ] Resource Management
+- [X] Resource Management
     - [X] Implement resource generation logic (steel, oil, rubber, food, gold)
-    - [ ] Endpoint to collect resources from a city
-    - [ ] Endpoint to update resource rates (affected by buildings/research)
-    - [ ] Implement resource storage limits (warehouse, etc.)
+    - [X] Endpoint to collect resources from a city
+    - [X] Endpoint to update resource rates (affected by buildings/research)
+    - [X] Implement basic resource storage limits (warehouse, etc.)
 
 - [ ] Building Construction & Upgrades
-    - [ ] Endpoint to construct/upgrade buildings
+    - [X] Endpoint to construct/upgrade buildings
     - [ ] Implement building effects (resource rates, unlocks, etc.)
     - [ ] Track construction queues and timers
     - [ ] Add building level-up logic and requirements
