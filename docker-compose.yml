@@ -31,6 +31,20 @@ services:
     environment:
       DATABASE_URL: postgresql://postgres:password@db:5432/gloryandiron
 
+  unit-worker:
+    build:
+      context: ./backend
+    command: ["python", "app/utils/unit_training_worker.py"]
+    volumes:
+      - .:/workspace
+    working_dir: /workspace/backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:password@db:5432/gloryandiron
+      PYTHONPATH: /workspace/backend
+
   frontend:
     build:
       context: ./frontend

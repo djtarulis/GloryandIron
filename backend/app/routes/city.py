@@ -74,12 +74,18 @@ def create_city(
     db.commit()
     db.refresh(city)
 
+    # Set active_city_id to this city if it's the player's first city
+    if is_first_city:
+        player.active_city_id = city.id
+        db.commit()
+        db.refresh(player)
+
     warehouse = Building(
-    city_id=city.id,
-    type="Warehouse",
-    level=1,
-    construction_started_at=datetime.now(timezone.utc),
-    construction_finished_at=datetime.now(timezone.utc)
+        city_id=city.id,
+        type="Warehouse",
+        level=1,
+        construction_started_at=datetime.now(timezone.utc),
+        construction_finished_at=datetime.now(timezone.utc)
     )
     db.add(warehouse)
     db.commit()

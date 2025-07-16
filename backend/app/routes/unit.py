@@ -6,6 +6,7 @@ from app.models import player
 from app.models.city import City
 from app.models.unit import Unit
 from app.models.unit_type import UnitType
+from app.models.unit_training import UnitTraining
 from app.db.session import get_db
 from app.routes.auth import (
     get_player_by_username,
@@ -55,10 +56,22 @@ def create_unit(
     now = datetime.now(timezone.utc)
     finish_time = now + timedelta(seconds=total_time)
 
-    # Here you would create a UnitTraining queue entry instead of adding units immediately.
-    # For now, just return the training info.
+    # Add training to queue
+    training = UnitTraining(
+        city_id=city_id,
+        unit_type=type,
+        quantity=quantity,
+        training_started_at=now,
+        training_finishes_at=finish_time,
+        finished=0
+    )
+    db.add(training)
+    db.commit()
+    db.refresh(training)
+
     return {
         "msg": f"Training {quantity} {type}(s) started",
+        "training_id": training.id,
         "city_id": city_id,
         "type": type,
         "quantity": quantity,
