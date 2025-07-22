@@ -1,0 +1,70 @@
+[
+    {
+        "name": "Barracks",
+        "description": "A military building where soldiers are housed and trained.",
+        "level": 1,
+        "cost": {
+            "steel": 150,
+            "food": 100,
+            "gold": 200
+        },
+        "build_time": 120,
+        "max_level": 5,
+        "resource_production": {},
+        "population_capacity": 200,
+        "required_buildings": [
+            "Town Hall"
+        ],
+        "required_research": [
+            "Military Training"
+        ],
+        "special_ability": [""]
+    },
+
+    {
+        "name": "Wheat Field",
+        "description": "A field used for growing wheat, providing a steady food supply.",
+        "level": 1,
+        "cost": {
+            "gold": 50
+        },
+        "build_time": 60,
+        "max_level": 5,
+        "resource_production": {
+            "food": 30
+        },
+        "population_capacity": 50,
+        "required_buildings": [
+            "Town Hall"
+        ],
+        "required_research": [
+            "Agriculture"
+        ],
+        "special_ability": [""]
+    },
+
+    {
+        "name": "Steel Mill",
+        "description": "A facility for processing iron into steel, essential for advanced construction and military applications.",
+        "level": 1,
+        "cost": {
+            "steel": 300,
+            "food": 150,
+            "oil": 50,
+            "gold": 100
+        },
+        "build_time": 180,
+        "max_level": 5,
+        "resource_production": {
+            "steel": 50
+        },
+        "population_capacity": 100,
+        "required_buildings": [
+            "Town Hall"
+        ],
+        "required_research": [
+            "Metallurgy"
+        ],
+        "special_ability": [""]
+    }
+]

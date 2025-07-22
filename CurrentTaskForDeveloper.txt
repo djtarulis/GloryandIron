@@ -29,17 +29,17 @@ Glory and Iron – In-Depth To-Do List
 
 - [ ] Troop Recruitment & Management
     - [X] Endpoint to train troops in a city
-    - [ ] Implement troop training queue and timers
-    - [ ] Endpoint to view city garrison
+    - [X] Implement troop training queue and timers
+    - [X] Endpoint to view city garrison
     - [ ] Endpoint to move troops between cities or to armies
-    - [ ] Prevent negative troop counts and enforce garrison limits
+    - [X] Prevent negative troop counts and enforce garrison limits
 
 - [ ] Army Management
     - [X] Endpoint to create an army from city garrison
     - [X] Endpoint to add units to an army (subtract from garrison)
     - [X] Endpoint to remove units from an army (return to garrison)
-    - [ ] Endpoint to view army details (units, location, status)
-    - [ ] Endpoint to move army on the map (with travel time)
+    - [X] Endpoint to view army details (units, location, status)
+    - [X] Endpoint to move army on the map (with travel time)
     - [ ] Handle army arrival, merging, and splitting logic
 
 - [ ] Combat System

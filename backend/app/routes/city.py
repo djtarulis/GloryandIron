@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from jose import jwt
 from datetime import datetime, timedelta, timezone
 
+from app.models.building_queue import BuildingQueue
+from app.models.building_type import BuildingType
 from app.db.session import get_db
 from app.models.city import City
 from app.models.building import Building
@@ -114,6 +116,8 @@ def collect_resources(
     payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     username = payload.get("sub")
     player = get_player_by_username(db, username)
+    if not player:
+        raise HTTPException(status_code=401, detail="Invalid user")
     city = db.query(City).filter(City.id == city_id, City.player_id == player.id).first()
     if not city:
         raise HTTPException(status_code=404, detail="City not found")
@@ -178,6 +182,8 @@ def get_city_details(
     payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     username = payload.get("sub")
     player = get_player_by_username(db, username)
+    if not player:
+        raise HTTPException(status_code=401, detail="Invalid user")
     city = db.query(City).filter(City.id == city_id, City.player_id == player.id).first()
     if not city:
         raise HTTPException(status_code=404, detail="City not found")
@@ -207,6 +213,14 @@ def get_city_details(
             "food": city.max_food,
             "gold": city.max_gold,
         },
+        "buildings": [
+            {
+                "type": b.type,
+                "level": b.level,
+                "construction_started_at": b.construction_started_at,
+                "construction_finished_at": b.construction_finished_at
+            } for b in city.buildings
+        ],
         "last_collected_at": city.last_collected_at,
         "created_at": city.created_at,
         "population": getattr(city, "population", None)
@@ -223,6 +237,8 @@ def update_city_rates(
     payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     username = payload.get("sub")
     player = get_player_by_username(db, username)
+    if not player:
+        raise HTTPException(status_code=401, detail="Invalid user")
     city = db.query(City).filter(City.id == city_id, City.player_id == player.id).first()
     if not city:
         raise HTTPException(status_code=404, detail="City not found")
@@ -255,6 +271,8 @@ def delete_city(
     payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     username = payload.get("sub")
     player = get_player_by_username(db, username)
+    if not player:
+        raise HTTPException(status_code=401, detail="Invalid user")
     city = db.query(City).filter(City.id == city_id, City.player_id == player.id).first()
     if not city:
         raise HTTPException(status_code=404, detail="City not found")
@@ -273,14 +291,33 @@ def construct_building(
     payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     username = payload.get("sub")
     player = get_player_by_username(db, username)
+    if not player:
+        raise HTTPException(status_code=401, detail="Invalid user")
     city = db.query(City).filter(City.id == city_id, City.player_id == player.id).first()
     if not city:
         raise HTTPException(status_code=404, detail="City not found")
+
+    building_type_obj = db.query(BuildingType).filter(BuildingType.name == building_type).first()
+    if not building_type_obj:
+        raise HTTPException(status_code=400, detail="Invalid building type")
+
+    # Check if there's an existing building queue entry for this city and type that is not finished
+    existing_queue = db.query(BuildingQueue).filter_by(
+        city_id=city.id,
+        type=building_type,
+        finished=0
+    ).first()
+    if existing_queue:
+        raise HTTPException(status_code=400, detail="Building is already in progress or in the queue.")
 
     # Check if building already exists
     building = db.query(Building).filter_by(city_id=city.id, type=building_type).first()
     now = datetime.now(timezone.utc)
     build_time = timedelta(minutes=5)  # Example: 5 minutes per level, adjust as needed
+
+    # Handle cases where the building is already finished and at max level
+    if building and building.level >= building_type_obj.max_level:
+        raise HTTPException(status_code=400, detail="Building is already at max level.")
 
     if building:
         # Upgrade existing building
@@ -288,27 +325,49 @@ def construct_building(
         building.construction_started_at = now
         building.construction_finished_at = now + build_time
         msg = f"{building_type} upgraded to level {building.level}."
+        db.add(building)
+        building_id = building.id
+        queue_level = building.level
     else:
-        # Create new building
-        building = Building(
+        # Create new building first
+        new_building = Building(
             city_id=city.id,
             type=building_type,
             level=1,
             construction_started_at=now,
             construction_finished_at=now + build_time
         )
-        db.add(building)
-        msg = f"{building_type} construction started."
+        db.add(new_building)
+        db.commit()
+        db.refresh(new_building)
+        building_id = new_building.id
+        queue_level = 1
 
+    # Add building to the queue
+    building_queue = BuildingQueue(
+        city_id=city.id,
+        building_id=building_id,
+        type=building_type,
+        level=queue_level,
+        quantity=1,
+        building_started_at=now,
+        building_finishes_at=now + build_time,
+        finished=0
+    )
+    db.add(building_queue)
+    msg = f"{building_type} construction started."
     db.commit()
-    db.refresh(building)
+    db.refresh(building_queue)
+
     return {
         "msg": msg,
         "building": {
-            "type": building.type,
-            "level": building.level,
-            "construction_started_at": building.construction_started_at,
-            "construction_finished_at": building.construction_finished_at
+            "city_id": city.id,
+            "building_id": building_id,
+            "type": building_type,
+            "level": queue_level,
+            "construction_started_at": now,
+            "construction_finished_at": now + build_time
         }
     }
 
@@ -321,6 +380,8 @@ def get_city_garrison(
     payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     username = payload.get("sub")
     player_obj = get_player_by_username(db, username)
+    if not player_obj:
+        raise HTTPException(status_code=401, detail="Invalid user")
     city = db.query(City).filter(City.id == city_id, City.player_id == player_obj.id).first()
     if not city:
         raise HTTPException(status_code=403, detail="Not authorized to view this city garrison")
