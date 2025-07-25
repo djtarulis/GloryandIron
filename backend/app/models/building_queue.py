@@ -13,3 +13,6 @@ class BuildingQueue(Base):
     building_started_at = Column(DateTime, nullable=False)
     building_finishes_at = Column(DateTime, nullable=False)
     finished = Column(Integer, default=0)  # 0 = in progress, 1 = finished
+    # Grid coordinates for the building
+    x = Column(Integer, nullable=True)
+    y = Column(Integer, nullable=True)

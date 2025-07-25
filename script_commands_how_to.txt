@@ -1,0 +1,11 @@
+--- Alembic migrations ---
+
+docker compose exec backend bash
+cd /workspace
+alembic -c alembic.ini revision --autogenerate -m "Add active_city_id to players"
+alembic -c alembic.ini upgrade head
+
+--- populate tables ---
+docker compose exec backend bash
+export PYTHONPATH=/workspace/backend
+python populate_tables/populate_unit_type.py

@@ -21,7 +21,7 @@ Base.metadata.create_all(bind=engine)
 
 router = APIRouter()
 
-app.include_router(auth_router, prefix="/auth", tags=["auth"])
-app.include_router(city_router, prefix="/city", tags=["city"])
-app.include_router(unit_router, prefix="/unit", tags=["unit"])
-app.include_router(army_router, prefix="/army", tags=["army"])
+app.include_router(auth_router)
+app.include_router(city_router)
+app.include_router(unit_router)
+app.include_router(army_router)

@@ -187,11 +187,22 @@ def get_city_details(
     city = db.query(City).filter(City.id == city_id, City.player_id == player.id).first()
     if not city:
         raise HTTPException(status_code=404, detail="City not found")
+    
+    # grid is a 2D array, each cell is {building: {...} or None}
+    grid_size = city.grid_size if hasattr(city, "grid_size") else 8
+    grid = [[{"building": None} for _ in range(grid_size)] for _ in range(grid_size)]
+    buildings = db.query(Building).filter(Building.city_id == city_id).all()
+    for b in buildings:
+        if b.x is not None and b.y is not None:
+            grid[b.y][b.x] = {"building": {"name": b.type, "level": b.level}}
+
     return {
         "id": city.id,
         "name": city.name,
         "x": city.x,
         "y": city.y,
+        "grid_size": grid_size,
+        "grid": grid,
         "resources": {
             "steel": city.steel,
             "oil": city.oil,
@@ -285,6 +296,8 @@ def delete_city(
 def construct_building(
     city_id: int,
     building_type: str = Body(..., embed=True),
+    x: int = Body(..., embed=True),
+    y: int = Body(..., embed=True),
     db: Session = Depends(get_db),
     token: str = Depends(oauth2_scheme)
 ):
@@ -301,39 +314,47 @@ def construct_building(
     if not building_type_obj:
         raise HTTPException(status_code=400, detail="Invalid building type")
 
-    # Check if there's an existing building queue entry for this city and type that is not finished
+    # Check if cell is occupied
+    cell_building = db.query(Building).filter_by(city_id=city.id, x=x, y=y).first()
+    if cell_building:
+        raise HTTPException(status_code=400, detail="Cell already occupied")
+
+    # Check if there's an existing building queue entry for this cell that is not finished
     existing_queue = db.query(BuildingQueue).filter_by(
         city_id=city.id,
-        type=building_type,
+        x=x,
+        y=y,
         finished=0
     ).first()
     if existing_queue:
-        raise HTTPException(status_code=400, detail="Building is already in progress or in the queue.")
+        raise HTTPException(status_code=400, detail="Building is already in progress or in the queue at this cell.")
 
-    # Check if building already exists
-    building = db.query(Building).filter_by(city_id=city.id, type=building_type).first()
+    # Check if building of this type already exists anywhere in the city
+    building = db.query(Building).filter_by(city_id=city.id, type=building_type, x=x, y=y).first()
     now = datetime.now(timezone.utc)
     build_time = timedelta(minutes=5)  # Example: 5 minutes per level, adjust as needed
 
     # Handle cases where the building is already finished and at max level
     if building and building.level >= building_type_obj.max_level:
-        raise HTTPException(status_code=400, detail="Building is already at max level.")
+        raise HTTPException(status_code=400, detail="Building is already at max level at this cell.")
 
     if building:
-        # Upgrade existing building
+        # Upgrade existing building at this cell
         building.level += 1
         building.construction_started_at = now
         building.construction_finished_at = now + build_time
-        msg = f"{building_type} upgraded to level {building.level}."
+        msg = f"{building_type} at ({x},{y}) upgraded to level {building.level}."
         db.add(building)
         building_id = building.id
         queue_level = building.level
     else:
-        # Create new building first
+        # Create new building at this cell
         new_building = Building(
             city_id=city.id,
             type=building_type,
             level=1,
+            x=x,
+            y=y,
             construction_started_at=now,
             construction_finished_at=now + build_time
         )
@@ -349,13 +370,15 @@ def construct_building(
         building_id=building_id,
         type=building_type,
         level=queue_level,
+        x=x,
+        y=y,
         quantity=1,
         building_started_at=now,
         building_finishes_at=now + build_time,
         finished=0
     )
     db.add(building_queue)
-    msg = f"{building_type} construction started."
+    msg = f"{building_type} construction started at ({x},{y})."
     db.commit()
     db.refresh(building_queue)
 
@@ -366,6 +389,8 @@ def construct_building(
             "building_id": building_id,
             "type": building_type,
             "level": queue_level,
+            "x": x,
+            "y": y,
             "construction_started_at": now,
             "construction_finished_at": now + build_time
         }

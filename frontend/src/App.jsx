@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "./App.css";
+import CityGrid from "./components/city/CityGrid";
 
-const API_BASE = "http://localhost:5173"; // Update if using a different backend host
+const API_BASE = "http://localhost:8000";
 
 function App() {
   const [cities, setCities] = useState([]);
@@ -12,6 +13,7 @@ function App() {
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
+  const [selectedCityId, setSelectedCityId] = useState(null);
 
   // Handle login
   const handleLogin = async (e) => {
@@ -39,20 +41,17 @@ function App() {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
-        console.log("Cities response:", res);
         setCities(res.data.cities || []);
       })
-      .catch((err) => {
-        console.error("Error fetching cities:", err.response?.data || err.message);
-        setCities([]);
-      })
+      .catch(() => setCities([]))
       .finally(() => setLoading(false));
   }, [token]);
 
-  return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-4">Glory and Iron</h1>
-      {!loggedIn ? (
+  // Render login form if not logged in
+  if (!loggedIn) {
+    return (
+      <div className="max-w-2xl mx-auto p-6">
+        <h1 className="text-3xl font-bold mb-4">Glory and Iron</h1>
         <form onSubmit={handleLogin} className="mb-6 flex flex-col gap-2">
           <input
             type="text"
@@ -75,22 +74,47 @@ function App() {
           </button>
           {authError && <div className="text-red-500">{authError}</div>}
         </form>
+      </div>
+    );
+  }
+
+  // If a city is selected, show the city grid
+  if (selectedCityId) {
+    return (
+      <div className="max-w-2xl mx-auto p-6">
+        <button
+          className="mb-4 px-3 py-1 bg-gray-300 rounded"
+          onClick={() => setSelectedCityId(null)}
+        >
+          &larr; Back to City List
+        </button>
+        <CityGrid cityId={selectedCityId} token={token} />
+      </div>
+    );
+  }
+
+  // Otherwise, show the city list
+  return (
+    <div className="max-w-2xl mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-4">Glory and Iron</h1>
+      {loading ? (
+        <div>Loading cities...</div>
+      ) : cities.length === 0 ? (
+        <div>No cities found.</div>
       ) : (
         <div>
           <h2 className="text-xl font-semibold mb-2">Your Cities</h2>
-          {loading ? (
-            <div>Loading cities...</div>
-          ) : cities.length === 0 ? (
-            <div>No cities found.</div>
-          ) : (
-            <ul className="space-y-2">
-              {cities.map((city) => (
-                <li key={city.id} className="border p-2 rounded">
-                  <strong>{city.name}</strong> (x: {city.x}, y: {city.y})
-                </li>
-              ))}
-            </ul>
-          )}
+          <ul className="space-y-2">
+            {cities.map((city) => (
+              <li
+                key={city.id}
+                className="border p-2 rounded cursor-pointer hover:bg-blue-100"
+                onClick={() => setSelectedCityId(city.id)}
+              >
+                <strong>{city.name}</strong> (x: {city.x}, y: {city.y})
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </div>

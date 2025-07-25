@@ -14,4 +14,8 @@ class Building(Base):
     construction_started_at = Column(DateTime(timezone=True), nullable=True)
     construction_finished_at = Column(DateTime(timezone=True), nullable=True)
 
+    # Grid coordinates for the building
+    x = Column(Integer, nullable=True)
+    y = Column(Integer, nullable=True)
+
     city = relationship("City", back_populates="buildings")
