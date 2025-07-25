@@ -24,8 +24,8 @@ Glory and Iron – In-Depth To-Do List
 - [ ] Building Construction & Upgrades
     - [X] Endpoint to construct/upgrade buildings
     - [ ] Implement building effects (resource rates, unlocks, etc.)
-    - [ ] Track construction queues and timers
-    - [ ] Add building level-up logic and requirements
+    - [X] Track construction queues and timers
+    - [X] Add building level-up logic and requirements
 
 - [ ] Troop Recruitment & Management
     - [X] Endpoint to train troops in a city
